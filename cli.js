@@ -127,52 +127,91 @@ function viewDirectory() {
     });
 };
 
-    // function updateDirectory() {
+    function updateDirectory() {
 
-    //     connection.query("SELECT * FROM employee WHERE ?", [first_name, last_name, id], (err, results) => {
-    //         if (err) throw err;
-    //         inquirer.prompt([
-    //             {
-    //                 name: "choice",
-    //                 type: "rawlist",
-    //                 choices: () => {
-    //                     var choiceArray = [];
-    //                     for (var i = 0; i < results.length; i++) {
-    //                         choiceArray.push(results[i].item_name);
-    //                     }
-    //                     return choiceArray;
-    //                 }
-    //             }
-    //         },
-    //         //
-    //             {
-    //                 name: "lastName",
-    //                 type: "input",
-    //                 message: "Enter the employee's last name.",
-    //             },
-    //             {
-    //                 name: "role",
-    //                 type: "input",
-    //                 message: "What is their role?",
-    //             },
-    //             {
-    //                 name: "department",
-    //                 type: "input",
-    //                 message: "What is their department?",
-    //             }
-    //         ])
-    //             .then(answer => {
-    //                 connection.query(
-    //                     "UPDATE employee SET ? WHERE ?",
-    //                     [
-    //                         {
-    //                         department: answer.department
-    //                         }
-    //                     ],
-    //                     function (error) {
-    //                         if (error) throw err;
-    //                         console.log("Added new employee profile.");
-    //                     }
-    //                 );
-    //             })
-    //     )};
+        connection.query("SELECT * FROM employee WHERE ?", [first_name, last_name, id], (err, results) => {
+            if (err) throw err;
+            inquirer.prompt([
+                {
+                    name: "choice",
+                    type: "rawlist",
+                    choices: () => {
+                        var choiceArray = [];
+                        for (var i = 0; i < results.length; i++) {
+                            choiceArray.push(results[i].item_name);
+                        }
+                        return choiceArray;
+                    }
+                }
+            ])   
+            .then (answer => {
+                connection.query ("SELECT * FROM employee WHERE ?", {})
+            })
+            },
+            inquirer.prompt([
+                {
+                    name: "role",
+                    type: "input",
+                    message: "What is their new role?",
+                },
+                {
+                    name: "roleId",
+                    type: "input",
+                    message: "What is their new role ID number?",
+                },
+                {
+                    name: "salary",
+                    type: "input",
+                    message: "What is their new salary?",
+                },
+                {
+                    name: "department",
+                    type: "input",
+                    message: "What is their new department?",
+                },
+                {
+                    name: "departmentId",
+                    type: "input",
+                    message: "What is their new department ID number?",
+                },
+                {
+                    name: "managerId",
+                    type: "input",
+                    message: "What is their new manager's ID number?",
+                },
+            ])
+                .then(answer => {
+                    connection.query(
+                        "UPDATE employee SET ? WHERE ?",
+                        [
+                            {
+                            role_id: answer.roleId
+                            },
+                            {
+                            manager_id: answer.manager_id
+                            },
+                        ],
+                    connection.query("UPDATE role SET ? WHERE ?",
+                        [
+                            {
+                            title: answer.role
+                            },
+                            {
+                            salary: answer.salary
+                            },
+                            {
+                            department_id:answer.departmentId
+                            },
+                        ]),
+                        connection.query("UPDATE department SET ? WHERE ?",
+                            {
+                            name: answer.department
+                            }
+                            ),
+                        function (error) {
+                            if (error) throw err;
+                            console.log("Employee profile is updated.");
+                        }
+                    );
+                })
+        )};
