@@ -39,12 +39,11 @@ function startTracker() {
                     break;
                 case "Update company directory":
                     updateDirectory();
-                    break;
-                case "EXIT":
-                    connection.end();
-                default:
                     startTracker();
-
+                    break;
+                default:
+                    console.log("Signing out of Employee Tracker.");
+                    connection.end();
             }
         })
 };
@@ -77,9 +76,9 @@ function addNew() {
             message: "Enter their salary.",
         },
         {
-            name: "manager",
+            name: "managerId",
             type: "input",
-            message: "Who is their manager?",
+            message: "Enter their manager's ID number.",
         },
         {
             name: "department",
@@ -97,13 +96,12 @@ function addNew() {
                 {
                     first_name: answer.firstName,
                     last_name: answer.lastName,
-                    title: answer.role,
-                    manager_id: answer.manager
+                    role_id: answer.roleId,
+                    manager_id: answer.managerId
                 }
             );
             connection.query("INSERT INTO role SET ?",
                 {
-                    department: answer.department,
                     title: answer.role,
                     salary: answer.salary,
                     department_id: answer.departmentId
@@ -114,63 +112,67 @@ function addNew() {
                     name: answer.department,
                 }
             );
-        });
+        console.log("Successfully added " +(answer.firstName)+ ".");
+        startTracker();
+    });
 };
 
 function viewDirectory() {
     //have choices correspond to USING columns
-    connection.query("SELECT * FROM employees", (err, results) => {
+    connection.query("SELECT * FROM employee", (err, results) => {
         if (err) throw err;
+        console.log("Current Employees:");
         console.table(results);
+        startTracker();
     });
 };
 
-    function updateDirectory() {
+    // function updateDirectory() {
 
-        connection.query("SELECT * FROM employee WHERE ?", [first_name, last_name, id], (err, results) => {
-            if (err) throw err;
-            inquirer.prompt([
-                {
-                    name: "choice",
-                    type: "rawlist",
-                    choices: () => {
-                        var choiceArray = [];
-                        for (var i = 0; i < results.length; i++) {
-                            choiceArray.push(results[i].item_name);
-                        }
-                        return choiceArray;
-                    }
-                },
-                {
-                    name: "lastName",
-                    type: "input",
-                    message: "Enter the employee's last name.",
-                },
-                {
-                    name: "role",
-                    type: "input",
-                    message: "What is their role?",
-                },
-                {
-                    name: "department",
-                    type: "input",
-                    message: "What is their department?",
-                }
-            ])
-                .then(answer => {
-                    connection.query(
-                        "UPDATE employee SET ? WHERE ?",
-                        [
-                            {
-                            department: answer.department
-                            }
-                        ],
-                        function (error) {
-                            if (error) throw err;
-                            console.log("Added new employee profile.");
-                            startTracker();
-                        }
-                    );
-                })
-        }
-        )};
+    //     connection.query("SELECT * FROM employee WHERE ?", [first_name, last_name, id], (err, results) => {
+    //         if (err) throw err;
+    //         inquirer.prompt([
+    //             {
+    //                 name: "choice",
+    //                 type: "rawlist",
+    //                 choices: () => {
+    //                     var choiceArray = [];
+    //                     for (var i = 0; i < results.length; i++) {
+    //                         choiceArray.push(results[i].item_name);
+    //                     }
+    //                     return choiceArray;
+    //                 }
+    //             }
+    //         },
+    //         //
+    //             {
+    //                 name: "lastName",
+    //                 type: "input",
+    //                 message: "Enter the employee's last name.",
+    //             },
+    //             {
+    //                 name: "role",
+    //                 type: "input",
+    //                 message: "What is their role?",
+    //             },
+    //             {
+    //                 name: "department",
+    //                 type: "input",
+    //                 message: "What is their department?",
+    //             }
+    //         ])
+    //             .then(answer => {
+    //                 connection.query(
+    //                     "UPDATE employee SET ? WHERE ?",
+    //                     [
+    //                         {
+    //                         department: answer.department
+    //                         }
+    //                     ],
+    //                     function (error) {
+    //                         if (error) throw err;
+    //                         console.log("Added new employee profile.");
+    //                     }
+    //                 );
+    //             })
+    //     )};
