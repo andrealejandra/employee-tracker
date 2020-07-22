@@ -127,7 +127,7 @@ function viewDirectory() {
 
     function updateDirectory() {
 
-        connection.query("SELECT * FROM employee", (err, results) => {
+        connection.query("SELECT * FROM employee WHERE ?", [first_name, last_name, id], (err, results) => {
             if (err) throw err;
             inquirer.prompt([
                 {
@@ -161,7 +161,9 @@ function viewDirectory() {
                     connection.query(
                         "UPDATE employee SET ? WHERE ?",
                         [
-                            
+                            {
+                            department: answer.department
+                            }
                         ],
                         function (error) {
                             if (error) throw err;
@@ -171,4 +173,4 @@ function viewDirectory() {
                     );
                 })
         }
-    };
+        )};
